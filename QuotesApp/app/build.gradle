@@ -28,5 +28,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 
+    compile 'com.github.provigen:ProviGen-lib:2.0.1'
+
     provided 'org.glassfish:javax.annotation:10.0-b28'
 }

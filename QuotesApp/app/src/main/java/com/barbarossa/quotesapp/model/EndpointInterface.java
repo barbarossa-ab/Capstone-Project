@@ -14,5 +14,5 @@ public interface EndpointInterface {
     @GET("/quote.json")
     Call<QuoteResponse> getQuoteResponse(@Header(Utility.API_KEY_HEADER) String apiKey);
 
-    
+
 }
