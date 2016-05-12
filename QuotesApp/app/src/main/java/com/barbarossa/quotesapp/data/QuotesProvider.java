@@ -32,6 +32,7 @@ public class QuotesProvider extends ProviGenProvider {
                         .createTable(database);
 
                 // Do initial population here.
+
             }
 
             @Override
