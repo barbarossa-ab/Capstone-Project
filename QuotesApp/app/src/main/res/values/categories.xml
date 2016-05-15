@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="categories_array">
+        <item>@string/categ_inspirational</item>
+        <item>@string/categ_funny</item>
+        <item>@string/categ_friendship</item>
+        <item>@string/categ_life</item>
+        <item>@string/categ_love</item>
+        <item>@string/categ_family</item>
+    </string-array>
+</resources>

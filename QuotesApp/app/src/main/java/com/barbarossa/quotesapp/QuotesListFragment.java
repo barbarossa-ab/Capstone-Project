@@ -30,9 +30,11 @@ public class QuotesListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener {
 
-    private OnFragmentInteractionListener mListener;
+    private static final String CATEGORY_KEY = "CATEGORY_KEY";
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private String mCategory;
+    private OnFragmentInteractionListener mListener;
+//    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
 
@@ -49,9 +51,10 @@ public class QuotesListFragment extends Fragment
      * @return A new instance of fragment QuotesListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static QuotesListFragment newInstance(String param1, String param2) {
+    public static QuotesListFragment newInstance(String category) {
         QuotesListFragment fragment = new QuotesListFragment();
         Bundle args = new Bundle();
+        args.putString(CATEGORY_KEY, category);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +63,7 @@ public class QuotesListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mCategory = getArguments().getString(CATEGORY_KEY);
         }
     }
 
@@ -69,8 +73,8 @@ public class QuotesListFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+//        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
@@ -109,7 +113,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return QuotesLoader.newQuotesForCategoryInstance(getContext());
+        return QuotesLoader.newQuotesForCategoryInstance(getContext(), mCategory);
     }
 
     @Override
@@ -180,17 +184,6 @@ public class QuotesListFragment extends Fragment
             mCursor.moveToPosition(position);
             holder.quoteView.setText(mCursor.getString(QuotesLoader.Query.QUOTE_TEXT));
             holder.authorView.setText(mCursor.getString(QuotesLoader.Query.AUTHOR));
-//            holder.subtitleView.setText(
-//                    DateUtils.getRelativeTimeSpanString(
-//                            mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-//                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-//                            DateUtils.FORMAT_ABBREV_ALL).toString()
-//                            + " by "
-//                            + mCursor.getString(ArticleLoader.Query.AUTHOR));
-//            holder.thumbnailView.setImageUrl(
-//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
-//            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
 
         @Override

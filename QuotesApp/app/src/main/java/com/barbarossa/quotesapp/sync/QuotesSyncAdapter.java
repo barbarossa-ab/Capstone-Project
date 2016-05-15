@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,11 +65,13 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String ACTION_DATA_UPDATED =
             "com.barbarossa.quotesapp.app.ACTION_DATA_UPDATED";
 
-    // Interval at which to sync with the weather, in seconds.
-    // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    // 24 hrs
+    public static final int SYNC_INTERVAL = 60 * 60 * 24;
+    // 20 mins
+    public static final int SYNC_FLEXTIME = 60 * 20;
+
+    // 12 hrs
+    public static final int MIN_REFRESH_INTERVAL = 60 * 60 * 12 * 1000;
 
     public QuotesSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -78,6 +81,11 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
+
+        // Fix multiple updates at app start
+        if((System.currentTimeMillis() - Utility.getLastUpdate(getContext())) < MIN_REFRESH_INTERVAL ) {
+            return;
+        }
 
         final String BASE_URL = Utility.BASE_URL;
         final String API_KEY = Utility.API_KEY;
@@ -89,24 +97,51 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 
         EndpointInterface apiService = retrofit.create(EndpointInterface.class);
 
-//        for(int i = 0 ; i < 20; i++) {
-        Call<QuoteResponse> quoteResponseCall = apiService.getQuoteResponse(API_KEY);
+        String[] categories = getContext().getResources().getStringArray(R.array.categories_array);
 
-        try{
-            Response<QuoteResponse> response = quoteResponseCall.execute();
+        for(String category : categories) {
+//            ContentValues[] valsVector = new ContentValues[Utility.QUOTES_PER_CATEG];
+            boolean firstResponse = true;
 
-            if(response.isSuccessful()) {
-                QuoteResponse q = response.body();
+            for(int quoteIndex = 0 ; quoteIndex < Utility.QUOTES_PER_CATEG ; quoteIndex++) {
+                Call<QuoteResponse> quoteResponseCall =
+                        apiService.getQuoteForCategoryResponse(API_KEY,
+                                category.toLowerCase());
+                try{
+                    Response<QuoteResponse> response = quoteResponseCall.execute();
 
-                ContentValues vals = new ContentValues();
-                vals.put(QuotesContract.QUOTE_TEXT, q.getContents().getQuote());
-                vals.put(QuotesContract.AUTHOR, q.getContents().getAuthor());
-                vals.put(QuotesContract.QUOTE_ID, q.getContents().getId());
+                    if(response.isSuccessful()) {
+                        if(firstResponse) {
+                            firstResponse = false;
 
-                getContext().getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+                            String[] selArgs = {category};
+                            getContext().getContentResolver().delete(
+                                    QuotesContract.CONTENT_URI,
+                                    QuotesContract.CATEGORY_NAME + "=?",
+                                    selArgs);
+
+                            Utility.setLastUpdate(getContext(), System.currentTimeMillis());
+                        }
+
+                        QuoteResponse q = response.body();
+
+                        ContentValues vals = new ContentValues();
+                        vals.put(QuotesContract.QUOTE_TEXT, q.getContents().getQuote());
+                        vals.put(QuotesContract.AUTHOR, q.getContents().getAuthor());
+                        vals.put(QuotesContract.QUOTE_ID, q.getContents().getId());
+                        vals.put(QuotesContract.CATEGORY_NAME, category);
+
+                        getContext().getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+
+//                        valsVector[quoteIndex] = vals;
+                    }
+                } catch (IOException e) {
+                }
             }
-        } catch (IOException e) {
+
+//            getContext().getContentResolver().bulkInsert(QuotesContract.CONTENT_URI, valsVector);
         }
+
     }
 
 
@@ -199,5 +234,6 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
     public static void initializeSyncAdapter(Context context) {
         getSyncAccount(context);
     }
+
 
 }

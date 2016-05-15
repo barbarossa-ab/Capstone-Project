@@ -3,6 +3,15 @@
     <string name="sync_account_type">quotesapp.barbarossa.com</string>
     <string name="content_authority">com.barbarossa.quotesapp</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open_drawer_desc">Display quote categories</string>
+    <string name="close_drawer_desc">Hide quote categories</string>
+
+    <!-- Categories -->
+    <string name="categ_inspirational">Inspirational</string>
+    <string name="categ_funny">Funny</string>
+    <string name="categ_friendship">Friendship</string>
+    <string name="categ_life">Life</string>
+    <string name="categ_love">Love</string>
+    <string name="categ_family">Family</string>
+
 </resources>

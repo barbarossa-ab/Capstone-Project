@@ -9,12 +9,14 @@ import android.net.Uri;
  */
 public class QuotesLoader extends CursorLoader {
 
-    public static QuotesLoader newQuotesForCategoryInstance(Context context) {
-        return new QuotesLoader(context, QuotesContract.CONTENT_URI);
+    public static QuotesLoader newQuotesForCategoryInstance(Context context, String category) {
+        return new QuotesLoader(context, QuotesContract.CONTENT_URI,
+                new String[] {category});
     }
 
-    private QuotesLoader(Context context, Uri uri) {
-        super(context, uri, Query.PROJECTION, null, null, null);
+    private QuotesLoader(Context context, Uri uri, String[] selArgs) {
+//        context.getContentResolver().query(c);
+        super(context, uri, Query.PROJECTION, QuotesContract.CATEGORY_NAME +"=?", selArgs, null);
     }
 
     public interface Query {
