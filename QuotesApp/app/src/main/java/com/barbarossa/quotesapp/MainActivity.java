@@ -23,6 +23,11 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     private FrameLayout mContainer;
 
+    private String mCategory;
+
+    private static final String CATEGORY_KEY = "CATEGORY_KEY";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +36,16 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        String[] categories = getResources().getStringArray(R.array.categories_array);
+        if(savedInstanceState != null && savedInstanceState.containsKey(CATEGORY_KEY)) {
+            mCategory = savedInstanceState.getString(CATEGORY_KEY);
+        } else {
+            mCategory = getResources().getStringArray(R.array.categories_array)[0];
+        }
 
         mContainer = (FrameLayout) findViewById(R.id.fragment_container);
 
         if(mContainer != null) {
-            QuotesListFragment quoteListFragment = QuotesListFragment.newInstance(categories[0]);
+            QuotesListFragment quoteListFragment = QuotesListFragment.newInstance(mCategory);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -63,7 +72,14 @@ public class MainActivity extends AppCompatActivity
         QuotesSyncAdapter.initializeSyncAdapter(this);
     }
 
-//    @Override
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(CATEGORY_KEY, mCategory);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        // The action bar home/up action should open or close the drawer.
 //        switch (item.getItemId()) {
@@ -88,8 +104,9 @@ public class MainActivity extends AppCompatActivity
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        QuotesListFragment quotesListFragment = QuotesListFragment
-                .newInstance((String)menuItem.getTitle());
+        mCategory = (String)menuItem.getTitle();
+
+        QuotesListFragment quotesListFragment = QuotesListFragment.newInstance(mCategory);
 
 //        if (mContainer != null) {
 //            mContainer.removeAllViews();
