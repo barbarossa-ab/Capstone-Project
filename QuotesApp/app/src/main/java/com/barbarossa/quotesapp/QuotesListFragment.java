@@ -27,14 +27,12 @@ import com.barbarossa.quotesapp.data.QuotesLoader;
  * create an instance of this fragment.
  */
 public class QuotesListFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        SwipeRefreshLayout.OnRefreshListener {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String CATEGORY_KEY = "CATEGORY_KEY";
 
     private String mCategory;
     private OnFragmentInteractionListener mListener;
-//    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
 
@@ -42,15 +40,6 @@ public class QuotesListFragment extends Fragment
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuotesListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static QuotesListFragment newInstance(String category) {
         QuotesListFragment fragment = new QuotesListFragment();
         Bundle args = new Bundle();
@@ -73,26 +62,23 @@ public class QuotesListFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
 
-//        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-//        mSwipeRefreshLayout.setOnRefreshListener(this);
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
 
-        if (savedInstanceState == null) {
+//        if (savedInstanceState == null) {
 //            refresh();
-        }
+//        }
 
 
         return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
@@ -132,10 +118,6 @@ public class QuotesListFragment extends Fragment
         mRecyclerView.setAdapter(null);
     }
 
-    @Override
-    public void onRefresh() {
-
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -148,8 +130,8 @@ public class QuotesListFragment extends Fragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void onQuoteClick(long id);
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
@@ -169,13 +151,15 @@ public class QuotesListFragment extends Fragment
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getActivity().getLayoutInflater().inflate(R.layout.quote_item, parent, false);
             final ViewHolder vh = new ViewHolder(view);
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                    startActivity(new Intent(Intent.ACTION_VIEW,
 //                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
-//                }
-//            });
+
+                    mListener.onQuoteClick(getItemId(vh.getAdapterPosition()));
+                }
+            });
             return vh;
         }
 

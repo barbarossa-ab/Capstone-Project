@@ -96,10 +96,7 @@ public class MainActivity extends AppCompatActivity
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack
-        transaction.replace(R.id.fragment_container, quotesListFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
+        transaction.add(R.id.fragment_container, quotesListFragment);
         transaction.commit();
 
         // Highlight the selected item has been done by NavigationView
@@ -111,7 +108,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onQuoteClick(long quoteId) {
+        QuoteDetailFragment quoteDetailFragment = QuoteDetailFragment.newInstance(quoteId);
 
+        if (mContainer != null) {
+            mContainer.removeAllViews();
+        }
+
+        // Create new fragment and transaction
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.add(R.id.fragment_container, quoteDetailFragment);
+        transaction.commit();
     }
 }

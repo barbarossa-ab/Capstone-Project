@@ -10,14 +10,25 @@ import android.net.Uri;
 public class QuotesLoader extends CursorLoader {
 
     public static QuotesLoader newQuotesForCategoryInstance(Context context, String category) {
-        return new QuotesLoader(context, QuotesContract.CONTENT_URI,
+        return new QuotesLoader(
+                context,
+                QuotesContract.CONTENT_URI,
+                QuotesContract.CATEGORY_NAME + "=?",
                 new String[] {category});
     }
 
-    private QuotesLoader(Context context, Uri uri, String[] selArgs) {
-//        context.getContentResolver().query(c);
-        super(context, uri, Query.PROJECTION, QuotesContract.CATEGORY_NAME +"=?", selArgs, null);
+    public static QuotesLoader newQuoteByIdInstance(Context context, long id) {
+        return new QuotesLoader(
+                context,
+                QuotesContract.CONTENT_URI,
+                QuotesContract._ID + "=?",
+                new String[] {String.valueOf(id)});
     }
+
+    private QuotesLoader(Context context, Uri uri, String selString, String[] selArgs) {
+        super(context, uri, Query.PROJECTION, selString, selArgs, null);
+    }
+
 
     public interface Query {
         String[] PROJECTION = {
