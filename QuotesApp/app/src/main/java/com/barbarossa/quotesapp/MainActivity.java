@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.e("quotesapp","main activity onCreate()");
+
         setContentView(R.layout.activity_main);
 
         String[] categories = getResources().getStringArray(R.array.categories_array);
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            fragmentTransaction.add(R.id.fragment_container, quoteListFragment);
+            fragmentTransaction.replace(R.id.fragment_container, quoteListFragment);
             fragmentTransaction.commit();
         }
 
@@ -87,22 +91,22 @@ public class MainActivity extends AppCompatActivity
         QuotesListFragment quotesListFragment = QuotesListFragment
                 .newInstance((String)menuItem.getTitle());
 
-        if (mContainer != null) {
-            mContainer.removeAllViews();
-        }
+//        if (mContainer != null) {
+//            mContainer.removeAllViews();
+//        }
 
         // Create new fragment and transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack
-        transaction.add(R.id.fragment_container, quotesListFragment);
+        transaction.replace(R.id.fragment_container, quotesListFragment);
         transaction.commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
         // Set action bar title
-        setTitle(menuItem.getTitle());
+//        setTitle(menuItem.getTitle());
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
@@ -111,16 +115,16 @@ public class MainActivity extends AppCompatActivity
     public void onQuoteClick(long quoteId) {
         QuoteDetailFragment quoteDetailFragment = QuoteDetailFragment.newInstance(quoteId);
 
-        if (mContainer != null) {
-            mContainer.removeAllViews();
-        }
+//        if (mContainer != null) {
+//            mContainer.removeAllViews();
+//        }
 
         // Create new fragment and transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack
-        transaction.add(R.id.fragment_container, quoteDetailFragment);
+        transaction.replace(R.id.fragment_container, quoteDetailFragment);
         transaction.commit();
     }
 }

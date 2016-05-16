@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,9 @@ public class QuotesListFragment extends Fragment
         Bundle args = new Bundle();
         args.putString(CATEGORY_KEY, category);
         fragment.setArguments(args);
+
+        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
+
         return fragment;
     }
 
@@ -59,6 +63,8 @@ public class QuotesListFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("quotesapp","quote list fragment onCreateView() : " + this.toString());
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
 
@@ -68,7 +74,6 @@ public class QuotesListFragment extends Fragment
 //        if (savedInstanceState == null) {
 //            refresh();
 //        }
-
 
         return rootView;
     }
@@ -83,6 +88,8 @@ public class QuotesListFragment extends Fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        Log.e("quotesapp","quote list fragment onAttach() : " + this.toString());
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -94,16 +101,22 @@ public class QuotesListFragment extends Fragment
     @Override
     public void onDetach() {
         super.onDetach();
+
+        Log.e("quotesapp","quote list fragment onDetach() : " + this.toString());
         mListener = null;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.e("quotesapp","quote list fragment onCreateLoader() : " + this.toString());
+
         return QuotesLoader.newQuotesForCategoryInstance(getContext(), mCategory);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.e("quotesapp","quote list fragment onLoadFinished() : " + this.toString());
+
         Adapter adapter = new Adapter(data);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
@@ -115,6 +128,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.e("quotesapp","quote list fragment onLoaderReset() : " + this.toString());
         mRecyclerView.setAdapter(null);
     }
 
