@@ -3,20 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    >
+    android:layout_width="match_parent">
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <include layout="@layout/quote_item"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        />
-
-        <WebView
-            android:id="@+id/detail_webview"
-            android:layout_height="match_parent"
+        <include layout="@layout/quote_item"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
+
+        <RelativeLayout android:layout_height="match_parent"
+            android:layout_width="match_parent">
+            <WebView
+                android:id="@+id/detail_webview"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"/>
+            <FrameLayout
+                android:layout_alignParentTop="true"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"
+                android:background="#fff"/>
+        </RelativeLayout>
+
     </LinearLayout>
 </ScrollView>

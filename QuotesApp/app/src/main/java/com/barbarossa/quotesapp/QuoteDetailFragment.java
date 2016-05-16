@@ -13,7 +13,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
-import com.barbarossa.quotesapp.data.QuotesContract;
 import com.barbarossa.quotesapp.data.QuotesLoader;
 
 /**
