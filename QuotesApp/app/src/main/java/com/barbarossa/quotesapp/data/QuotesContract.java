@@ -23,7 +23,6 @@ public interface QuotesContract extends ProviGenBaseContract{
     @Column(Type.TEXT)
     public static final String CATEGORY_NAME = "category_name";
 
-
     @ContentUri
     public static final Uri CONTENT_URI = Uri.parse("content://com.barbarossa.quotesapp/quotes");
 }

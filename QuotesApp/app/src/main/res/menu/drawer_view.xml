@@ -20,5 +20,10 @@
         <item
             android:id="@+id/family_sel"
             android:title="@string/categ_family" />
+
+        <item
+            android:id="@+id/favourites_sel"
+            android:title="@string/categ_favourites" />
+
     </group>
 </menu>

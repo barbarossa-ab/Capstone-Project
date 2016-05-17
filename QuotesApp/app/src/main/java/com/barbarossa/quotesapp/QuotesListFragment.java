@@ -1,6 +1,8 @@
 package com.barbarossa.quotesapp;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
@@ -14,8 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.barbarossa.quotesapp.data.QuotesContract;
 import com.barbarossa.quotesapp.data.QuotesLoader;
 
 
@@ -180,8 +184,38 @@ public class QuotesListFragment extends Fragment
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
-            holder.quoteView.setText(mCursor.getString(QuotesLoader.Query.QUOTE_TEXT));
-            holder.authorView.setText(mCursor.getString(QuotesLoader.Query.AUTHOR));
+
+            final String quote = mCursor.getString(QuotesLoader.Query.QUOTE_TEXT);
+            final String author = mCursor.getString(QuotesLoader.Query.AUTHOR);
+            holder.quoteView.setText(quote);
+            holder.authorView.setText(author);
+
+            holder.shareBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,
+                            "\"" + quote + "\" -- " + author);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                }
+            });
+
+            holder.favouriteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ContentValues vals = new ContentValues();
+                    vals.put(QuotesContract.QUOTE_TEXT, quote);
+                    vals.put(QuotesContract.AUTHOR, author);
+                    vals.put(QuotesContract.QUOTE_ID, mCursor.getString(QuotesLoader.Query.QUOTE_ID));
+                    vals.put(QuotesContract.CATEGORY_NAME, getString(R.string.categ_favourites));
+
+                    getContext().getContentResolver().insert(
+                            QuotesContract.CONTENT_URI,
+                            vals);
+                }
+            });
         }
 
         @Override
@@ -193,11 +227,15 @@ public class QuotesListFragment extends Fragment
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView quoteView;
         public TextView authorView;
+        public ImageView shareBtn;
+        public ImageView favouriteBtn;
 
         public ViewHolder(View view) {
             super(view);
             quoteView = (TextView) view.findViewById(R.id.quote_text);
             authorView = (TextView) view.findViewById(R.id.author_text);
+            shareBtn = (ImageView) view.findViewById(R.id.share_btn);
+            favouriteBtn = (ImageView) view.findViewById(R.id.favourite_btn);
         }
     }
 

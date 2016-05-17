@@ -6,10 +6,11 @@
     <!--<dimen name="list_side_margin">16dp</dimen>-->
     <!--<dimen name="list_bottom_margin">16dp</dimen>-->
 
-    <dimen name="card_margin">4dp</dimen>
-    <dimen name="card_text_side_margin">12dp</dimen>
-    <dimen name="card_text_top_margin">8dp</dimen>
-    <dimen name="card_text_bottom_margin">12dp</dimen>
-    <dimen name="card_text_between_margin">4dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_text_side_margin">32dp</dimen>
+    <dimen name="card_text_end_margin">64dp</dimen>
+    <dimen name="card_text_top_margin">32dp</dimen>
+    <dimen name="card_text_bottom_margin">32dp</dimen>
+    <dimen name="card_text_between_margin">24dp</dimen>
     <dimen name="appbar_elevation">4dp</dimen>
 </resources>

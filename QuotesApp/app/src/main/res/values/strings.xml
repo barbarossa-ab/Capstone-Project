@@ -13,5 +13,5 @@
     <string name="categ_life">Life</string>
     <string name="categ_love">Love</string>
     <string name="categ_family">Family</string>
-
+    <string name="categ_favourites">Favourites</string>
 </resources>

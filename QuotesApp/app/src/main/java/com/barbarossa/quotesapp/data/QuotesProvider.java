@@ -2,8 +2,10 @@ package com.barbarossa.quotesapp.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import com.tjeannin.provigen.ProviGenOpenHelper;
 import com.tjeannin.provigen.ProviGenProvider;
@@ -16,25 +18,17 @@ import com.tjeannin.provigen.model.Constraint;
  */
 public class QuotesProvider extends ProviGenProvider {
     private static Class[] contracts = new Class[]{QuotesContract.class};
-
-    private static final String [] INITIAL_CATEGORIES = {
-            "inspirational",
-            "friendship",
-            "funny",
-            "life",
-            "love",
-            "family"
-    };
+    SQLiteOpenHelper mOpenHelper;
 
     @Override
     public SQLiteOpenHelper openHelper(Context context) {
-        return new SQLiteOpenHelper(getContext(), "quotes.db", null, 1) {
+        mOpenHelper = new SQLiteOpenHelper(getContext(), "quotes.db", null, 1) {
 
             @Override
             public void onCreate(SQLiteDatabase database) {
                 // Automatically creates table and needed columns.
                 new TableBuilder(QuotesContract.class)
-                        .addConstraint(QuotesContract.QUOTE_ID, Constraint.UNIQUE, Constraint.OnConflict.ABORT)
+//                        .addConstraint(QuotesContract.QUOTE_ID, Constraint.UNIQUE, Constraint.OnConflict.ABORT)
                         .createTable(database);
             }
 
@@ -48,11 +42,15 @@ public class QuotesProvider extends ProviGenProvider {
 
         };
 
-//        return new ProviGenOpenHelper(getContext(), "quotes.db", null, 1, contracts);
+        return mOpenHelper;
     }
 
     @Override
     public Class[] contractClasses() {
         return contracts;
     }
+
+//    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+//        super.query(uri, projection, selection, selectionArgs, sortOrder);
+//    }
 }
