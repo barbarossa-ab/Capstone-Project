@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         if(savedInstanceState != null && savedInstanceState.containsKey(CATEGORY_KEY)) {
             mCategory = savedInstanceState.getString(CATEGORY_KEY);
         } else {
-            mCategory = getResources().getStringArray(R.array.categories_array)[0];
+            mCategory = getResources().getStringArray(R.array.categories_array)[2].toLowerCase();
         }
 
         mContainer = (FrameLayout) findViewById(R.id.fragment_container);

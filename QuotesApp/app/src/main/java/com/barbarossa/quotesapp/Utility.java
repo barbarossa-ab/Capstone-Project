@@ -12,7 +12,7 @@ public class Utility {
     public static final String BASE_URL = "http://quotes.rest/";
     public static final String API_KEY = "1h52AU4uTBa5GuMzXJMJugeF";
     public static final String API_KEY_HEADER = "X-Theysaidso-Api-Secret";
-    public static final int QUOTES_PER_CATEG = 10;
+    public static final int QUOTES_PER_CATEG = 2;
 
     private static final String QUOTES_SHARED_PREF = "quotesapp.shared.prefs";
     private static final String PREF_LAST_UPDATE = "pref_last_update";

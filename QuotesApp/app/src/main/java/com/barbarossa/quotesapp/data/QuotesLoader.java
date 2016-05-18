@@ -9,11 +9,18 @@ import android.net.Uri;
  */
 public class QuotesLoader extends CursorLoader {
 
+    public static QuotesLoader newQuotesForCategoryAfterTimestampInstance(Context context, String category, long timeStamp) {
+        return new QuotesLoader(
+                context,
+                QuotesProvider.buildQuotesByCategoryAfterTimestampUri(category, timeStamp),
+                null,
+                null);
+    }
+
     public static QuotesLoader newQuotesForCategoryInstance(Context context, String category) {
         return new QuotesLoader(
                 context,
-                QuotesProvider.buildQuotesByCategotyUri(category),
-//                QuotesContract.CATEGORY_NAME + "=?",
+                QuotesProvider.buildQuotesByCategoryUri(category),
                 null,
                 null);
     }
@@ -37,11 +44,13 @@ public class QuotesLoader extends CursorLoader {
                 QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
                 QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
                 QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.TIMESTAMP
         };
 
         int _ID = 0;
         int QUOTE_ID = 1;
         int QUOTE_TEXT = 2;
         int AUTHOR = 3;
+        int TIMESTAMP = 4;
     }
 }

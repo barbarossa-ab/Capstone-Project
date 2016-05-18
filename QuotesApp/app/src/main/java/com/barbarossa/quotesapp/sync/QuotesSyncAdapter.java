@@ -14,7 +14,6 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.barbarossa.quotesapp.R;
@@ -27,7 +26,6 @@ import com.barbarossa.quotesapp.model.QuoteResponse;
 import com.barbarossa.quotesapp.Utility;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -74,12 +72,12 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 
         String[] categories = getContext().getResources().getStringArray(R.array.categories_array);
 
+        boolean firstResponse = true;
+
         for(String category : categories) {
             String catName = category.toLowerCase();
 
             long catId = QuotesProvider.getCategoryIdByName(getContext(), catName);
-
-            boolean firstResponse = true;
 
             for(int quoteIndex = 0 ; quoteIndex < Utility.QUOTES_PER_CATEG ; quoteIndex++) {
                 Call<QuoteResponse> quoteResponseCall =
@@ -98,57 +96,54 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 //                                    QuotesContract.CATEGORY_NAME + "=?",
 //                                    selArgs);
 
-                            Utility.setLastUpdate(getContext(), System.currentTimeMillis());
+                            long curTime = System.currentTimeMillis();
+                            Utility.setLastUpdate(getContext(), curTime);
+
+                            Log.e("timestamp-debug", "last update set to :" + curTime);
                         }
 
                         QuoteResponse q = response.body();
 
-                        ContentValues vals = new ContentValues();
-                        vals.put(QuotesContract.QUOTE_TEXT, q.getContents().getQuote());
-                        vals.put(QuotesContract.AUTHOR, q.getContents().getAuthor());
-                        vals.put(QuotesContract.QUOTE_ID, q.getContents().getId());
+                        long quoteId = QuotesProvider.insertQuote(
+                                getContext(),
+                                q.getContents().getId(),
+                                q.getContents().getQuote(),
+                                q.getContents().getAuthor());
 
-                        if(QuotesProvider.getQuoteIdByApiId(getContext(), q.getContents().getId()) == -1) {
-                            Uri uri = getContext().getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
-                            long quoteId = Long.valueOf(uri.getLastPathSegment());
-
-                            vals = new ContentValues();
-                            vals.put(QuotesCategoriesContract.QUOTE_ID, quoteId);
-                            vals.put(QuotesCategoriesContract.CATEGORY_ID, catId);
-                            getContext().getContentResolver().insert(QuotesCategoriesContract.CONTENT_URI, vals);
+                        if (quoteId != -1) {
+                            QuotesProvider.insertQuoteCategoryPair(getContext(), quoteId, catId);
                         }
                     }
                 } catch (IOException e) {
                 }
             }
-
-//            getContext().getContentResolver().bulkInsert(QuotesContract.CONTENT_URI, valsVector);
         }
 
-        String[] PROJECTION = {
-                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,
-                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
-                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
-                QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
-                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.QUOTE_ID,
-                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.CATEGORY_ID,
-                CategoriesContract.TABLE_NAME + "." + CategoriesContract._ID,
-                CategoriesContract.TABLE_NAME + "." + CategoriesContract.CATEGORY_NAME,
-
-        };
-
-
-        Cursor c = getContext().getContentResolver().query(
-                QuotesProvider.buildQuotesByCategotyUri("love"),
-                PROJECTION,
-                null,
-                null,
-                null
-        );
-
-        if(c.moveToFirst()) {
-            Log.e("dump-cursor", DatabaseUtils.dumpCursorToString(c));
-        }
+//        String[] PROJECTION = {
+//                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,
+//                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
+//                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
+//                QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
+//                QuotesContract.TABLE_NAME + "." + QuotesContract.TIMESTAMP,
+//                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.QUOTE_ID,
+//                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.CATEGORY_ID,
+//                CategoriesContract.TABLE_NAME + "." + CategoriesContract._ID,
+//                CategoriesContract.TABLE_NAME + "." + CategoriesContract.CATEGORY_NAME,
+//
+//        };
+//
+//
+//        Cursor c = getContext().getContentResolver().query(
+//                QuotesProvider.buildQuotesByCategoryUri("love"),
+//                PROJECTION,
+//                null,
+//                null,
+//                null
+//        );
+//
+//        if(c.moveToFirst()) {
+//            Log.e("dump-cursor", DatabaseUtils.dumpCursorToString(c));
+//        }
     }
 
 

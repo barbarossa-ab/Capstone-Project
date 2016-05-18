@@ -41,7 +41,7 @@ public class QuotesListFragment extends Fragment
     private String mCategory;
     private OnFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
-
+    private Adapter mQuoteAdapter;
 
     public QuotesListFragment() {
         // Required empty public constructor
@@ -75,6 +75,7 @@ public class QuotesListFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+
         getLoaderManager().initLoader(0, null, this);
 
 //        if (savedInstanceState == null) {
@@ -116,7 +117,21 @@ public class QuotesListFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.e("quotesapp","quote list fragment onCreateLoader() : " + this.toString());
 
-        return QuotesLoader.newQuotesForCategoryInstance(getContext(), mCategory.toLowerCase());
+//        if(mCategory.equals(getResources().getString(R.string.categ_favourites))) {
+            QuotesLoader ql =  QuotesLoader.newQuotesForCategoryInstance(
+                    getContext(),
+                    mCategory.toLowerCase());
+
+//            ql.forceLoad();
+
+            return ql;
+//        }
+
+//        return QuotesLoader.newQuotesForCategoryAfterTimestampInstance(
+//                getContext(),
+//                mCategory.toLowerCase(),
+//                Utility.getLastUpdate(getContext())
+//        );
     }
 
     @Override
@@ -207,16 +222,26 @@ public class QuotesListFragment extends Fragment
             holder.favouriteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    long favCatId = QuotesProvider.getCategoryIdByName(getContext(),
+//                            getResources().getString(R.string.categ_favourites).toLowerCase());
+//
+//                    ContentValues vals = new ContentValues();
+//                    vals.put(QuotesCategoriesContract.QUOTE_ID, mCursor.getLong(QuotesLoader.Query._ID));
+//                    vals.put(QuotesCategoriesContract.CATEGORY_ID, favCatId);
+//
+//                    getContext().getContentResolver().insert(
+//                            QuotesCategoriesContract.CONTENT_URI,
+//                            vals);
+
                     long favCatId = QuotesProvider.getCategoryIdByName(getContext(),
-                            getResources().getString(R.string.categ_favourites).toLowerCase());
+                        getResources().getString(R.string.categ_favourites).toLowerCase());
 
-                    ContentValues vals = new ContentValues();
-                    vals.put(QuotesCategoriesContract.QUOTE_ID, mCursor.getLong(QuotesLoader.Query._ID));
-                    vals.put(QuotesCategoriesContract.CATEGORY_ID, favCatId);
+                    QuotesProvider.insertQuoteCategoryPair(
+                            getContext(),
+                            mCursor.getLong(QuotesLoader.Query._ID),
+                            favCatId
+                    );
 
-                    getContext().getContentResolver().insert(
-                            QuotesCategoriesContract.CONTENT_URI,
-                            vals);
                 }
             });
         }

@@ -23,6 +23,9 @@ public interface QuotesContract extends ProviGenBaseContract{
     @Column(Type.TEXT)
     public static final String AUTHOR = "author";
 
+    @Column(Type.INTEGER)
+    public static final String TIMESTAMP = "timestamp";
+
     @ContentUri
     public static final Uri CONTENT_URI = Uri.parse("content://" + Utility.CONTENT_AUTHORITY + "/" + TABLE_NAME);
 }

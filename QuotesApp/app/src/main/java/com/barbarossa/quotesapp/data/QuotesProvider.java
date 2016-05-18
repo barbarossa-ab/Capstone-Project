@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -30,17 +31,31 @@ public class QuotesProvider extends ProviGenProvider {
     };
 
     public static final String QUOTES_BY_CATEG_PATH = "quotes_by_categ";
+//    public static final String QUOTES_BY_CATEG_OLDER_THAN_PATH = "quotes_by_categ_older_than";
+
     public static final Uri CONTENT_BY_CATEG_URI = Uri.parse("content://"
             + Utility.CONTENT_AUTHORITY
             + "/"
             + QUOTES_BY_CATEG_PATH );
+
+//    public static final Uri CONTENT_BY_CATEG_OLDER_THAN_URI = Uri.parse("content://"
+//            + Utility.CONTENT_AUTHORITY
+//            + "/"
+//            + QUOTES_BY_CATEG_OLDER_THAN_PATH );
+
 
     private static final SQLiteQueryBuilder sQuotesByCategoryQueryBuilder;
 
     private static final String sQuotesByCategorySelection =
             CategoriesContract.TABLE_NAME+
                     "." + CategoriesContract.CATEGORY_NAME + " = ? ";
-    static{
+
+    private static final String sQuotesByCategoryAfterTimestampSelection =
+            CategoriesContract.TABLE_NAME + "." + CategoriesContract.CATEGORY_NAME + " = ? AND " +
+                    QuotesContract.TABLE_NAME + "." + QuotesContract.TIMESTAMP + " >= ?" ;
+
+
+    static {
         sQuotesByCategoryQueryBuilder = new SQLiteQueryBuilder();
 
         //This is an inner join which looks like
@@ -62,16 +77,23 @@ public class QuotesProvider extends ProviGenProvider {
         );
     }
 
-
+    private final static int QUOTES_BY_CATEG_MATCH = 101;
+    private final static int QUOTES_BY_CATEG_OLDER_THAN_MATCH = 102;
 
     private SQLiteOpenHelper mOpenHelper;
     private UriMatcher uriMatcher;
-    private int QUOTES_MATCH = 101;
+
 
     @Override
     public boolean onCreate() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(Utility.CONTENT_AUTHORITY, QUOTES_BY_CATEG_PATH + "/*", QUOTES_MATCH);
+        uriMatcher.addURI(Utility.CONTENT_AUTHORITY,
+                QUOTES_BY_CATEG_PATH + "/*",
+                QUOTES_BY_CATEG_MATCH);
+
+        uriMatcher.addURI(Utility.CONTENT_AUTHORITY,
+                QUOTES_BY_CATEG_PATH + "/*/#",
+                QUOTES_BY_CATEG_OLDER_THAN_MATCH);
 
         return super.onCreate();
     }
@@ -96,7 +118,6 @@ public class QuotesProvider extends ProviGenProvider {
 
                 String[] categories = getContext().getResources().getStringArray(R.array.categories_array);
 
-                ContentValues[] cvVector = new ContentValues[categories.length];
                 for(String category : categories) {
                     ContentValues initialValues = new ContentValues();
                     initialValues.put(CategoriesContract.CATEGORY_NAME, category.toLowerCase());
@@ -106,7 +127,7 @@ public class QuotesProvider extends ProviGenProvider {
 
                 ContentValues initialValues = new ContentValues();
                 initialValues.put(CategoriesContract.CATEGORY_NAME,
-                        getContext().getResources().getString(R.string.categ_favourites));
+                        getContext().getResources().getString(R.string.categ_favourites).toLowerCase());
 
                 database.insert(CategoriesContract.TABLE_NAME, null, initialValues);
             }
@@ -130,32 +151,78 @@ public class QuotesProvider extends ProviGenProvider {
     }
 
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        final int match = uriMatcher.match(uri);
+        switch(uriMatcher.match(uri)) {
+            case QUOTES_BY_CATEG_MATCH:
+                String cat1 = uri.getPathSegments().get(1);
+                String sel = sQuotesByCategorySelection;
+                String[] selArgs = {cat1};
 
-        if(match == QUOTES_MATCH) {
-            Log.e("quotes-provider", "QUOTES_MATCH");
-            String category = uri.getLastPathSegment();
+                Cursor c1 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        sel,
+                        selArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
 
-            String sel = sQuotesByCategorySelection;
-            String[] selArgs = {category};
+//                Log.e("dump-cursor 1", DatabaseUtils.dumpCursorToString(c1));
 
-            return sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-                    projection,
-                    sel,
-                    selArgs,
-                    null,
-                    null,
-                    sortOrder
-            );
+                return c1;
 
-        } else {
-            return super.query(uri, projection, selection, selectionArgs, sortOrder);
+
+            case QUOTES_BY_CATEG_OLDER_THAN_MATCH:
+                String cat2 = uri.getPathSegments().get(1);
+                String startTime = uri.getPathSegments().get(2);
+                String sel2 = sQuotesByCategoryAfterTimestampSelection;
+                String[] selArgs2 = {cat2, startTime};
+
+//            {
+//                String sel3 = sQuotesByCategorySelection;
+//                String[] selArgs3 = {cat2};
+//
+//                Cursor c3 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+//                        projection,
+//                        sel3,
+//                        selArgs3,
+//                        null,
+//                        null,
+//                        sortOrder
+//                );
+//
+//                Log.e("dump-cursor 3", "startTime = " + startTime);
+//                Log.e("dump-cursor 3", DatabaseUtils.dumpCursorToString(c3));
+//            }
+
+                Cursor c2 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        sel2,
+                        selArgs2,
+                        null,
+                        null,
+                        sortOrder
+                );
+
+//                Log.e("dump-cursor 2", DatabaseUtils.dumpCursorToString(c2));
+
+                return c2;
+
+            default:
+                return super.query(uri, projection, selection, selectionArgs, sortOrder);
         }
     }
 
-    public static Uri buildQuotesByCategotyUri(String category) {
+    public static Uri buildQuotesByCategoryUri(String category) {
         return CONTENT_BY_CATEG_URI.buildUpon().appendPath(category).build();
     }
+
+    public static Uri buildQuotesByCategoryAfterTimestampUri(String category, long timeStamp) {
+        return CONTENT_BY_CATEG_URI.buildUpon()
+                .appendPath(category)
+                .appendPath(String.valueOf(timeStamp))
+                .build();
+    }
+
 
     public static long getQuoteIdByApiId(Context context, String quoteId) {
         String[] proj = {QuotesContract._ID};
@@ -194,5 +261,59 @@ public class QuotesProvider extends ProviGenProvider {
 
         return -1;
     }
+
+    public static long getQuoteCategoryPair(Context context, long quoteId, long catId) {
+        String[] proj = {
+                QuotesCategoriesContract._ID,
+                QuotesCategoriesContract.QUOTE_ID,
+                QuotesCategoriesContract.CATEGORY_ID};
+
+        String[] selArgs = {String.valueOf(quoteId), String.valueOf(catId)};
+
+        Cursor cursor = context.getContentResolver().query(
+                QuotesCategoriesContract.CONTENT_URI,
+                proj,
+                QuotesCategoriesContract.QUOTE_ID + "=? AND " + QuotesCategoriesContract.CATEGORY_ID + "=?",
+                selArgs,
+                null
+        );
+
+        if(cursor.moveToFirst()) {
+            return cursor.getLong(0);
+        }
+
+        return -1;
+    }
+
+
+    public static long insertQuote(Context context, String quoteApiId, String quote, String author) {
+        if(getQuoteIdByApiId(context, quoteApiId) == -1) {
+            ContentValues vals = new ContentValues();
+            vals.put(QuotesContract.QUOTE_TEXT, quote);
+            vals.put(QuotesContract.AUTHOR, author);
+            vals.put(QuotesContract.QUOTE_ID, quoteApiId);
+            vals.put(QuotesContract.TIMESTAMP, System.currentTimeMillis());
+
+            Uri uri = context.getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+            return Long.valueOf(uri.getLastPathSegment());
+        }
+
+        return -1;
+    }
+
+    public static long insertQuoteCategoryPair(Context context, long quoteId, long catId) {
+        if(getQuoteCategoryPair(context, quoteId, catId) == -1) {
+            ContentValues vals = new ContentValues();
+            vals.put(QuotesCategoriesContract.QUOTE_ID, quoteId);
+            vals.put(QuotesCategoriesContract.CATEGORY_ID, catId);
+
+            Uri uri = context.getContentResolver().insert(QuotesCategoriesContract.CONTENT_URI, vals);
+            return Long.valueOf(uri.getLastPathSegment());
+        }
+
+        return -1;
+    }
+
+
 
 }
