@@ -2,59 +2,34 @@ package com.barbarossa.quotesapp.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.text.format.Time;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.barbarossa.quotesapp.R;
+import com.barbarossa.quotesapp.data.CategoriesContract;
+import com.barbarossa.quotesapp.data.QuotesCategoriesContract;
 import com.barbarossa.quotesapp.data.QuotesContract;
+import com.barbarossa.quotesapp.data.QuotesProvider;
 import com.barbarossa.quotesapp.model.EndpointInterface;
 import com.barbarossa.quotesapp.model.QuoteResponse;
-import com.barbarossa.quotesapp.model.Utility;
+import com.barbarossa.quotesapp.Utility;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Vector;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
-import okhttp3.internal.Util;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -100,7 +75,10 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
         String[] categories = getContext().getResources().getStringArray(R.array.categories_array);
 
         for(String category : categories) {
-//            ContentValues[] valsVector = new ContentValues[Utility.QUOTES_PER_CATEG];
+            String catName = category.toLowerCase();
+
+            long catId = QuotesProvider.getCategoryIdByName(getContext(), catName);
+
             boolean firstResponse = true;
 
             for(int quoteIndex = 0 ; quoteIndex < Utility.QUOTES_PER_CATEG ; quoteIndex++) {
@@ -114,11 +92,11 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
                         if(firstResponse) {
                             firstResponse = false;
 
-                            String[] selArgs = {category};
-                            getContext().getContentResolver().delete(
-                                    QuotesContract.CONTENT_URI,
-                                    QuotesContract.CATEGORY_NAME + "=?",
-                                    selArgs);
+//                            String[] selArgs = {category};
+//                            getContext().getContentResolver().delete(
+//                                    QuotesContract.CONTENT_URI,
+//                                    QuotesContract.CATEGORY_NAME + "=?",
+//                                    selArgs);
 
                             Utility.setLastUpdate(getContext(), System.currentTimeMillis());
                         }
@@ -129,11 +107,16 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
                         vals.put(QuotesContract.QUOTE_TEXT, q.getContents().getQuote());
                         vals.put(QuotesContract.AUTHOR, q.getContents().getAuthor());
                         vals.put(QuotesContract.QUOTE_ID, q.getContents().getId());
-                        vals.put(QuotesContract.CATEGORY_NAME, category);
 
-                        getContext().getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+                        if(QuotesProvider.getQuoteIdByApiId(getContext(), q.getContents().getId()) == -1) {
+                            Uri uri = getContext().getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+                            long quoteId = Long.valueOf(uri.getLastPathSegment());
 
-//                        valsVector[quoteIndex] = vals;
+                            vals = new ContentValues();
+                            vals.put(QuotesCategoriesContract.QUOTE_ID, quoteId);
+                            vals.put(QuotesCategoriesContract.CATEGORY_ID, catId);
+                            getContext().getContentResolver().insert(QuotesCategoriesContract.CONTENT_URI, vals);
+                        }
                     }
                 } catch (IOException e) {
                 }
@@ -142,6 +125,30 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 //            getContext().getContentResolver().bulkInsert(QuotesContract.CONTENT_URI, valsVector);
         }
 
+        String[] PROJECTION = {
+                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
+                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.QUOTE_ID,
+                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.CATEGORY_ID,
+                CategoriesContract.TABLE_NAME + "." + CategoriesContract._ID,
+                CategoriesContract.TABLE_NAME + "." + CategoriesContract.CATEGORY_NAME,
+
+        };
+
+
+        Cursor c = getContext().getContentResolver().query(
+                QuotesProvider.buildQuotesByCategotyUri("love"),
+                PROJECTION,
+                null,
+                null,
+                null
+        );
+
+        if(c.moveToFirst()) {
+            Log.e("dump-cursor", DatabaseUtils.dumpCursorToString(c));
+        }
     }
 
 

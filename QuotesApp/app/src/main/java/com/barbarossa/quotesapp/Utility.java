@@ -1,4 +1,4 @@
-package com.barbarossa.quotesapp.model;
+package com.barbarossa.quotesapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
  * Created by Ioan on 11.05.2016.
  */
 public class Utility {
+    public static final String CONTENT_AUTHORITY = "com.barbarossa.quotesapp";
+
     public static final String BASE_URL = "http://quotes.rest/";
     public static final String API_KEY = "1h52AU4uTBa5GuMzXJMJugeF";
     public static final String API_KEY_HEADER = "X-Theysaidso-Api-Secret";

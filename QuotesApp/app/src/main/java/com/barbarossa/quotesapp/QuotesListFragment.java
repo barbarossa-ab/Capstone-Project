@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.barbarossa.quotesapp.data.QuotesCategoriesContract;
 import com.barbarossa.quotesapp.data.QuotesContract;
 import com.barbarossa.quotesapp.data.QuotesLoader;
+import com.barbarossa.quotesapp.data.QuotesProvider;
 
 
 /**
@@ -114,7 +116,7 @@ public class QuotesListFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.e("quotesapp","quote list fragment onCreateLoader() : " + this.toString());
 
-        return QuotesLoader.newQuotesForCategoryInstance(getContext(), mCategory);
+        return QuotesLoader.newQuotesForCategoryInstance(getContext(), mCategory.toLowerCase());
     }
 
     @Override
@@ -205,14 +207,15 @@ public class QuotesListFragment extends Fragment
             holder.favouriteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    long favCatId = QuotesProvider.getCategoryIdByName(getContext(),
+                            getResources().getString(R.string.categ_favourites).toLowerCase());
+
                     ContentValues vals = new ContentValues();
-                    vals.put(QuotesContract.QUOTE_TEXT, quote);
-                    vals.put(QuotesContract.AUTHOR, author);
-                    vals.put(QuotesContract.QUOTE_ID, mCursor.getString(QuotesLoader.Query.QUOTE_ID));
-                    vals.put(QuotesContract.CATEGORY_NAME, getString(R.string.categ_favourites));
+                    vals.put(QuotesCategoriesContract.QUOTE_ID, mCursor.getLong(QuotesLoader.Query._ID));
+                    vals.put(QuotesCategoriesContract.CATEGORY_ID, favCatId);
 
                     getContext().getContentResolver().insert(
-                            QuotesContract.CONTENT_URI,
+                            QuotesCategoriesContract.CONTENT_URI,
                             vals);
                 }
             });

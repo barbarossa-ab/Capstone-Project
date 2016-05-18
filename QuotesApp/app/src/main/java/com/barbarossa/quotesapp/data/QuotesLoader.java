@@ -12,9 +12,10 @@ public class QuotesLoader extends CursorLoader {
     public static QuotesLoader newQuotesForCategoryInstance(Context context, String category) {
         return new QuotesLoader(
                 context,
-                QuotesContract.CONTENT_URI,
-                QuotesContract.CATEGORY_NAME + "=?",
-                new String[] {category});
+                QuotesProvider.buildQuotesByCategotyUri(category),
+//                QuotesContract.CATEGORY_NAME + "=?",
+                null,
+                null);
     }
 
     public static QuotesLoader newQuoteByIdInstance(Context context, long id) {
@@ -32,10 +33,10 @@ public class QuotesLoader extends CursorLoader {
 
     public interface Query {
         String[] PROJECTION = {
-                QuotesContract._ID,
-                QuotesContract.QUOTE_ID,
-                QuotesContract.QUOTE_TEXT,
-                QuotesContract.AUTHOR,
+                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
+                QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
         };
 
         int _ID = 0;
