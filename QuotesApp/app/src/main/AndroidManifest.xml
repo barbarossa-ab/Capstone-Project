@@ -3,12 +3,10 @@
     package="com.barbarossa.quotesapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
-
 
     <application
         android:allowBackup="true"
@@ -23,12 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".data.QuotesProvider"
             android:authorities="com.barbarossa.quotesapp"
             android:exported="false"
-            android:syncable="true" >
-        </provider>
+            android:syncable="true"></provider>
 
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.QuotesAuthenticatorService">
@@ -54,7 +52,12 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <activity android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
-
 
 </manifest>

@@ -90,12 +90,6 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
                         if(firstResponse) {
                             firstResponse = false;
 
-//                            String[] selArgs = {category};
-//                            getContext().getContentResolver().delete(
-//                                    QuotesContract.CONTENT_URI,
-//                                    QuotesContract.CATEGORY_NAME + "=?",
-//                                    selArgs);
-
                             long curTime = System.currentTimeMillis();
                             Utility.setLastUpdate(getContext(), curTime);
 
@@ -114,6 +108,7 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
                             QuotesProvider.insertQuoteCategoryPair(getContext(), quoteId, catId);
                             QuotesProvider.notifyChange(getContext(), QuotesProvider.buildQuotesByCategoryUri(catName));
                         }
+
                     }
                 } catch (IOException e) {
                 }

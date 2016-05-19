@@ -48,24 +48,33 @@ public class QuotesListFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static QuotesListFragment newInstance(String category) {
-        QuotesListFragment fragment = new QuotesListFragment();
-        Bundle args = new Bundle();
-        args.putString(CATEGORY_KEY, category);
-        fragment.setArguments(args);
-
-        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
-
-        return fragment;
-    }
+//    public static QuotesListFragment newInstance(String category) {
+//        QuotesListFragment fragment = new QuotesListFragment();
+//        Bundle args = new Bundle();
+//        args.putString(CATEGORY_KEY, category);
+//        fragment.setArguments(args);
+//
+//        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
+//
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mCategory = getArguments().getString(CATEGORY_KEY);
+        if (savedInstanceState != null) {
+            mCategory = savedInstanceState.getString(CATEGORY_KEY);
+        } else {
+            mCategory = getResources().getStringArray(R.array.categories_array)[0].toLowerCase();
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(CATEGORY_KEY, mCategory);
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,14 +99,6 @@ public class QuotesListFragment extends Fragment
 
         return rootView;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -127,46 +128,30 @@ public class QuotesListFragment extends Fragment
         mListener = null;
     }
 
+    public void onCategoryChanged(String category) {
+        mCategory = category;
+        getLoaderManager().restartLoader(0, null, this);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.e("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
 
-//        QuotesLoader ql =  QuotesLoader.newAllQuotesInstance(getContext());
-        QuotesLoader ql =  QuotesLoader.newQuotesForCategoryInstance(
+        return QuotesLoader.newQuotesForCategoryAfterTimestampInstance(
                 getContext(),
-                mCategory.toLowerCase());
-        return ql;
-
-//        if(mCategory.equals(getResources().getString(R.string.categ_favourites))) {
-
-//            ql.forceLoad();
-
-//        }
-
-//        return QuotesLoader.newQuotesForCategoryAfterTimestampInstance(
-//                getContext(),
-//                mCategory.toLowerCase(),
-//                Utility.getLastUpdate(getContext())
-//        );
+                mCategory.toLowerCase(),
+                Utility.getLastUpdate(getContext()));
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.e("quotesapp-loader","quote list fragment onLoadFinished() : " + this.toString());
-
-//        Adapter adapter = new Adapter(data);
-//        adapter.setHasStableIds(true);
-//        mRecyclerView.setAdapter(adapter);
-
         mQuoteAdapter.swapCursor(data);
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.e("quotesapp-loader","quote list fragment onLoaderReset() : " + this.toString());
-//        mRecyclerView.setAdapter(null);
-
         mQuoteAdapter.swapCursor(null);
     }
 
@@ -182,16 +167,11 @@ public class QuotesListFragment extends Fragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-
         void onQuoteClick(long id);
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
-
-//        public Adapter(Cursor cursor) {
-//            mCursor = cursor;
-//        }
 
         @Override
         public long getItemId(int position) {
@@ -221,6 +201,8 @@ public class QuotesListFragment extends Fragment
 
             final String quote = mCursor.getString(QuotesLoader.Query.QUOTE_TEXT);
             final String author = mCursor.getString(QuotesLoader.Query.AUTHOR);
+            final long quoteId = mCursor.getLong(QuotesLoader.Query._ID);
+
             holder.quoteView.setText(quote);
             holder.authorView.setText(author);
 
@@ -239,23 +221,12 @@ public class QuotesListFragment extends Fragment
             holder.favouriteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    long favCatId = QuotesProvider.getCategoryIdByName(getContext(),
-//                            getResources().getString(R.string.categ_favourites).toLowerCase());
-//
-//                    ContentValues vals = new ContentValues();
-//                    vals.put(QuotesCategoriesContract.QUOTE_ID, mCursor.getLong(QuotesLoader.Query._ID));
-//                    vals.put(QuotesCategoriesContract.CATEGORY_ID, favCatId);
-//
-//                    getContext().getContentResolver().insert(
-//                            QuotesCategoriesContract.CONTENT_URI,
-//                            vals);
-
                     long favCatId = QuotesProvider.getCategoryIdByName(getContext(),
                         getResources().getString(R.string.categ_favourites).toLowerCase());
 
                     QuotesProvider.insertQuoteCategoryPair(
                             getContext(),
-                            mCursor.getLong(QuotesLoader.Query._ID),
+                            quoteId,
                             favCatId
                     );
 

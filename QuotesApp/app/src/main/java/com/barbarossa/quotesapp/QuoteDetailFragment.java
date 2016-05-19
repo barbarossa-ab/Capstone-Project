@@ -51,6 +51,10 @@ public class QuoteDetailFragment extends Fragment
         }
     }
 
+    public void setQuoteId(long quoteId) {
+        mQuoteId = quoteId;
+        getLoaderManager().initLoader(0, null, this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +69,7 @@ public class QuoteDetailFragment extends Fragment
         mArticleWebView.getSettings().setJavaScriptEnabled(true);
         mArticleWebView.setWebViewClient(new WebViewClient());
 
-        getLoaderManager().initLoader(0, null, this);
+//        getLoaderManager().initLoader(0, null, this);
 
         return rootView;
     }

@@ -1,5 +1,6 @@
 package com.barbarossa.quotesapp;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,8 +25,9 @@ public class MainActivity extends AppCompatActivity
     private FrameLayout mContainer;
 
     private String mCategory;
-
-    private static final String CATEGORY_KEY = "CATEGORY_KEY";
+//    private
+//
+//    private static final String CATEGORY_KEY = "CATEGORY_KEY";
 
 
     @Override
@@ -36,23 +38,17 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(CATEGORY_KEY)) {
-            mCategory = savedInstanceState.getString(CATEGORY_KEY);
-        } else {
-            mCategory = getResources().getStringArray(R.array.categories_array)[0].toLowerCase();
-        }
-
-        mContainer = (FrameLayout) findViewById(R.id.fragment_container);
-
-        if(mContainer != null) {
-            QuotesListFragment quoteListFragment = QuotesListFragment.newInstance(mCategory);
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            fragmentTransaction.replace(R.id.fragment_container, quoteListFragment);
-            fragmentTransaction.commit();
-        }
+//        mContainer = (FrameLayout) findViewById(R.id.fragment_container);
+//
+//        if(mContainer != null) {
+//            QuotesListFragment quoteListFragment = QuotesListFragment.newInstance(mCategory);
+//
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//            fragmentTransaction.replace(R.id.fragment_container, quoteListFragment);
+//            fragmentTransaction.commit();
+//        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -72,12 +68,11 @@ public class MainActivity extends AppCompatActivity
         QuotesSyncAdapter.initializeSyncAdapter(this);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(CATEGORY_KEY, mCategory);
-
-        super.onSaveInstanceState(outState);
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        outState.putString(CATEGORY_KEY, mCategory);
+//        super.onSaveInstanceState(outState);
+//    }
 
     //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
@@ -106,19 +101,9 @@ public class MainActivity extends AppCompatActivity
         // Create a new fragment and specify the fragment to show based on nav item clicked
         mCategory = (String)menuItem.getTitle();
 
-        QuotesListFragment quotesListFragment = QuotesListFragment.newInstance(mCategory);
-
-//        if (mContainer != null) {
-//            mContainer.removeAllViews();
-//        }
-
-        // Create new fragment and transaction
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-        transaction.replace(R.id.fragment_container, quotesListFragment);
-        transaction.commit();
+        QuotesListFragment qlFragment =
+                (QuotesListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_quote_list);
+        qlFragment.onCategoryChanged(mCategory);
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
@@ -130,18 +115,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onQuoteClick(long quoteId) {
-        QuoteDetailFragment quoteDetailFragment = QuoteDetailFragment.newInstance(quoteId);
-
-//        if (mContainer != null) {
-//            mContainer.removeAllViews();
-//        }
-
-        // Create new fragment and transaction
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-        transaction.replace(R.id.fragment_container, quoteDetailFragment);
-        transaction.commit();
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(Utility.QUOTE_KEY, quoteId);
+        startActivity(intent);
     }
 }

@@ -17,6 +17,8 @@ public class Utility {
     private static final String QUOTES_SHARED_PREF = "quotesapp.shared.prefs";
     private static final String PREF_LAST_UPDATE = "pref_last_update";
 
+    public static final String QUOTE_KEY = "QUOTE_KEY";
+
     public static long getLastUpdate(Context context) {
         SharedPreferences sp = context.getSharedPreferences(QUOTES_SHARED_PREF, Context.MODE_PRIVATE);
         return sp.getLong(PREF_LAST_UPDATE, 0);
