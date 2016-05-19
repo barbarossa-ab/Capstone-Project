@@ -17,6 +17,15 @@ public class QuotesLoader extends CursorLoader {
                 null);
     }
 
+    public static QuotesLoader newAllQuotesInstance(Context context) {
+        return new QuotesLoader(
+                context,
+                QuotesContract.CONTENT_URI,
+                null,
+                null);
+    }
+
+
     public static QuotesLoader newQuotesForCategoryInstance(Context context, String category) {
         return new QuotesLoader(
                 context,

@@ -150,6 +150,7 @@ public class QuotesProvider extends ProviGenProvider {
         return contracts;
     }
 
+    @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         switch(uriMatcher.match(uri)) {
             case QUOTES_BY_CATEG_MATCH:
@@ -167,7 +168,7 @@ public class QuotesProvider extends ProviGenProvider {
                 );
 
 //                Log.e("dump-cursor 1", DatabaseUtils.dumpCursorToString(c1));
-
+                c1.setNotificationUri(getContext().getContentResolver(), uri);
                 return c1;
 
 
@@ -204,7 +205,7 @@ public class QuotesProvider extends ProviGenProvider {
                 );
 
 //                Log.e("dump-cursor 2", DatabaseUtils.dumpCursorToString(c2));
-
+                c2.setNotificationUri(getContext().getContentResolver(), uri);
                 return c2;
 
             default:

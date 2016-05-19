@@ -3,6 +3,7 @@ package com.barbarossa.quotesapp;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
@@ -76,7 +77,6 @@ public class QuotesListFragment extends Fragment
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
-        getLoaderManager().initLoader(0, null, this);
 
 //        if (savedInstanceState == null) {
 //            refresh();
@@ -91,6 +91,14 @@ public class QuotesListFragment extends Fragment
 //            mListener.onFragmentInteraction(uri);
 //        }
 //    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.e("quotesapp-loader","init loader... " + this.toString());
+        getLoaderManager().initLoader(0, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -115,16 +123,22 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.e("quotesapp","quote list fragment onCreateLoader() : " + this.toString());
+        Log.e("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
+
+//        QuotesLoader ql =  QuotesLoader.newAllQuotesInstance(getContext());
+
+        QuotesLoader ql =  QuotesLoader.newQuotesForCategoryInstance(
+                getContext(),
+                mCategory.toLowerCase());
+        return ql;
+
+
+
 
 //        if(mCategory.equals(getResources().getString(R.string.categ_favourites))) {
-            QuotesLoader ql =  QuotesLoader.newQuotesForCategoryInstance(
-                    getContext(),
-                    mCategory.toLowerCase());
 
 //            ql.forceLoad();
 
-            return ql;
 //        }
 
 //        return QuotesLoader.newQuotesForCategoryAfterTimestampInstance(
@@ -136,7 +150,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.e("quotesapp","quote list fragment onLoadFinished() : " + this.toString());
+        Log.e("quotesapp-loader","quote list fragment onLoadFinished() : " + this.toString());
 
         Adapter adapter = new Adapter(data);
         adapter.setHasStableIds(true);
@@ -149,7 +163,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.e("quotesapp","quote list fragment onLoaderReset() : " + this.toString());
+        Log.e("quotesapp-loader","quote list fragment onLoaderReset() : " + this.toString());
         mRecyclerView.setAdapter(null);
     }
 
