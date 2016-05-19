@@ -112,12 +112,15 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 
                         if (quoteId != -1) {
                             QuotesProvider.insertQuoteCategoryPair(getContext(), quoteId, catId);
+                            QuotesProvider.notifyChange(getContext(), QuotesProvider.buildQuotesByCategoryUri(catName));
                         }
                     }
                 } catch (IOException e) {
                 }
             }
         }
+
+        Log.d(LOG_TAG, "Finished sync");
 
 //        String[] PROJECTION = {
 //                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,

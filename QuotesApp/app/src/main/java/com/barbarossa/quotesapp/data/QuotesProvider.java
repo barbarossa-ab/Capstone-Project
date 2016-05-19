@@ -31,18 +31,11 @@ public class QuotesProvider extends ProviGenProvider {
     };
 
     public static final String QUOTES_BY_CATEG_PATH = "quotes_by_categ";
-//    public static final String QUOTES_BY_CATEG_OLDER_THAN_PATH = "quotes_by_categ_older_than";
 
     public static final Uri CONTENT_BY_CATEG_URI = Uri.parse("content://"
             + Utility.CONTENT_AUTHORITY
             + "/"
             + QUOTES_BY_CATEG_PATH );
-
-//    public static final Uri CONTENT_BY_CATEG_OLDER_THAN_URI = Uri.parse("content://"
-//            + Utility.CONTENT_AUTHORITY
-//            + "/"
-//            + QUOTES_BY_CATEG_OLDER_THAN_PATH );
-
 
     private static final SQLiteQueryBuilder sQuotesByCategoryQueryBuilder;
 
@@ -81,17 +74,17 @@ public class QuotesProvider extends ProviGenProvider {
     private final static int QUOTES_BY_CATEG_OLDER_THAN_MATCH = 102;
 
     private SQLiteOpenHelper mOpenHelper;
-    private UriMatcher uriMatcher;
+    private UriMatcher mUriMatcher;
 
 
     @Override
     public boolean onCreate() {
-        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(Utility.CONTENT_AUTHORITY,
+        mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        mUriMatcher.addURI(Utility.CONTENT_AUTHORITY,
                 QUOTES_BY_CATEG_PATH + "/*",
                 QUOTES_BY_CATEG_MATCH);
 
-        uriMatcher.addURI(Utility.CONTENT_AUTHORITY,
+        mUriMatcher.addURI(Utility.CONTENT_AUTHORITY,
                 QUOTES_BY_CATEG_PATH + "/*/#",
                 QUOTES_BY_CATEG_OLDER_THAN_MATCH);
 
@@ -112,9 +105,23 @@ public class QuotesProvider extends ProviGenProvider {
                 new TableBuilder(CategoriesContract.class)
                         .addConstraint(CategoriesContract.CATEGORY_NAME, Constraint.UNIQUE, Constraint.OnConflict.ABORT)
                         .createTable(database);
+//
+//                new TableBuilder(QuotesCategoriesContract.class)
+//                        .createTable(database);
 
-                new TableBuilder(QuotesCategoriesContract.class)
-                        .createTable(database);
+                final String SQL_CREATE_QUOTES_CATEGORIES_TABLE = "CREATE TABLE " + QuotesCategoriesContract.TABLE_NAME + " (" +
+                        QuotesCategoriesContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        QuotesCategoriesContract.CATEGORY_ID + " INTEGER NOT NULL, " +
+                        QuotesCategoriesContract.QUOTE_ID + " INTEGER NOT NULL, " +
+                        " FOREIGN KEY (" + QuotesCategoriesContract.QUOTE_ID + ") REFERENCES " +
+                        QuotesContract.TABLE_NAME + " (" + QuotesContract._ID + "), " +
+                        " FOREIGN KEY (" + QuotesCategoriesContract.CATEGORY_ID + ") REFERENCES " +
+                        CategoriesContract.TABLE_NAME + " (" + CategoriesContract._ID + ")," +
+                        " UNIQUE (" + QuotesCategoriesContract.QUOTE_ID + ", " +
+                        QuotesCategoriesContract.CATEGORY_ID + ") ON CONFLICT ABORT);";
+
+                database.execSQL(SQL_CREATE_QUOTES_CATEGORIES_TABLE);
+
 
                 String[] categories = getContext().getResources().getStringArray(R.array.categories_array);
 
@@ -152,13 +159,15 @@ public class QuotesProvider extends ProviGenProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        switch(uriMatcher.match(uri)) {
+        Cursor cursor = null;
+
+        switch(mUriMatcher.match(uri)) {
             case QUOTES_BY_CATEG_MATCH:
                 String cat1 = uri.getPathSegments().get(1);
                 String sel = sQuotesByCategorySelection;
                 String[] selArgs = {cat1};
 
-                Cursor c1 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                cursor =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                         projection,
                         sel,
                         selArgs,
@@ -166,11 +175,7 @@ public class QuotesProvider extends ProviGenProvider {
                         null,
                         sortOrder
                 );
-
-//                Log.e("dump-cursor 1", DatabaseUtils.dumpCursorToString(c1));
-                c1.setNotificationUri(getContext().getContentResolver(), uri);
-                return c1;
-
+                break;
 
             case QUOTES_BY_CATEG_OLDER_THAN_MATCH:
                 String cat2 = uri.getPathSegments().get(1);
@@ -178,24 +183,7 @@ public class QuotesProvider extends ProviGenProvider {
                 String sel2 = sQuotesByCategoryAfterTimestampSelection;
                 String[] selArgs2 = {cat2, startTime};
 
-//            {
-//                String sel3 = sQuotesByCategorySelection;
-//                String[] selArgs3 = {cat2};
-//
-//                Cursor c3 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-//                        projection,
-//                        sel3,
-//                        selArgs3,
-//                        null,
-//                        null,
-//                        sortOrder
-//                );
-//
-//                Log.e("dump-cursor 3", "startTime = " + startTime);
-//                Log.e("dump-cursor 3", DatabaseUtils.dumpCursorToString(c3));
-//            }
-
-                Cursor c2 =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                cursor =  sQuotesByCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                         projection,
                         sel2,
                         selArgs2,
@@ -203,14 +191,14 @@ public class QuotesProvider extends ProviGenProvider {
                         null,
                         sortOrder
                 );
-
-//                Log.e("dump-cursor 2", DatabaseUtils.dumpCursorToString(c2));
-                c2.setNotificationUri(getContext().getContentResolver(), uri);
-                return c2;
+                break;
 
             default:
                 return super.query(uri, projection, selection, selectionArgs, sortOrder);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     public static Uri buildQuotesByCategoryUri(String category) {
@@ -296,6 +284,7 @@ public class QuotesProvider extends ProviGenProvider {
             vals.put(QuotesContract.TIMESTAMP, System.currentTimeMillis());
 
             Uri uri = context.getContentResolver().insert(QuotesContract.CONTENT_URI, vals);
+
             return Long.valueOf(uri.getLastPathSegment());
         }
 
@@ -309,12 +298,16 @@ public class QuotesProvider extends ProviGenProvider {
             vals.put(QuotesCategoriesContract.CATEGORY_ID, catId);
 
             Uri uri = context.getContentResolver().insert(QuotesCategoriesContract.CONTENT_URI, vals);
+
             return Long.valueOf(uri.getLastPathSegment());
         }
 
         return -1;
     }
 
+    public static void notifyChange(Context context, Uri uri) {
+        context.getContentResolver().notifyChange(uri, null);
+    }
 
 
 }

@@ -76,7 +76,13 @@ public class QuotesListFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager sglm =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(sglm);
 
+        mQuoteAdapter = new Adapter();
+        mRecyclerView.setAdapter(mQuoteAdapter);
 
 //        if (savedInstanceState == null) {
 //            refresh();
@@ -126,14 +132,10 @@ public class QuotesListFragment extends Fragment
         Log.e("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
 
 //        QuotesLoader ql =  QuotesLoader.newAllQuotesInstance(getContext());
-
         QuotesLoader ql =  QuotesLoader.newQuotesForCategoryInstance(
                 getContext(),
                 mCategory.toLowerCase());
         return ql;
-
-
-
 
 //        if(mCategory.equals(getResources().getString(R.string.categ_favourites))) {
 
@@ -152,19 +154,20 @@ public class QuotesListFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.e("quotesapp-loader","quote list fragment onLoadFinished() : " + this.toString());
 
-        Adapter adapter = new Adapter(data);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
+//        Adapter adapter = new Adapter(data);
+//        adapter.setHasStableIds(true);
+//        mRecyclerView.setAdapter(adapter);
+
+        mQuoteAdapter.swapCursor(data);
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.e("quotesapp-loader","quote list fragment onLoaderReset() : " + this.toString());
-        mRecyclerView.setAdapter(null);
+//        mRecyclerView.setAdapter(null);
+
+        mQuoteAdapter.swapCursor(null);
     }
 
 
@@ -186,9 +189,9 @@ public class QuotesListFragment extends Fragment
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
 
-        public Adapter(Cursor cursor) {
-            mCursor = cursor;
-        }
+//        public Adapter(Cursor cursor) {
+//            mCursor = cursor;
+//        }
 
         @Override
         public long getItemId(int position) {
@@ -262,8 +265,17 @@ public class QuotesListFragment extends Fragment
 
         @Override
         public int getItemCount() {
+            if ( null == mCursor ) return 0;
             return mCursor.getCount();
+
         }
+
+        public void swapCursor(Cursor newCursor) {
+            mCursor = newCursor;
+            notifyDataSetChanged();
+//            mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        }
+
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
