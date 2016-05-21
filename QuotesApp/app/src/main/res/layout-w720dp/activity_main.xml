@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="@dimen/appbar_elevation">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/fragment_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/quotes_categories_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorPrimary"
+            app:itemBackground="@color/colorPrimary"
+            app:itemTextColor="@color/select_item_nav"
+            app:menu="@menu/drawer_view"
+            app:headerLayout="@layout/nav_header"/>
+
+        <fragment android:id="@+id/fragment_quote_list"
+            android:name="com.barbarossa.quotesapp.QuotesListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--<fragment-->
+            <!--android:id="@+id/fragment_quote_list"-->
+            <!--android:name="com.barbarossa.quotesapp.QuotesListFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.barbarossa.quotesapp.model.EndpointInterface;
 import com.barbarossa.quotesapp.model.QuoteResponse;
-import com.barbarossa.quotesapp.model.Utility;
+import com.barbarossa.quotesapp.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

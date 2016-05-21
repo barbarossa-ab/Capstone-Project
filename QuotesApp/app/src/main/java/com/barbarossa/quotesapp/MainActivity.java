@@ -20,6 +20,8 @@ import com.barbarossa.quotesapp.sync.QuotesSyncAdapter;
 public class MainActivity extends AppCompatActivity
         implements QuotesListFragment.OnFragmentInteractionListener {
 
+    private boolean mTwoPane;
+
     private DrawerLayout mDrawer;
     private Toolbar mToolbar;
     private FrameLayout mContainer;
@@ -52,19 +54,25 @@ public class MainActivity extends AppCompatActivity
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
-                this,  mDrawer, mToolbar,
-                R.string.open_drawer_desc, R.string.close_drawer_desc
-        );
-        mDrawer.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        mDrawerToggle.syncState();
+
+        if(mDrawer == null) {
+            mTwoPane = true;
+
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+
+            ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+                        this,  mDrawer, mToolbar,
+                        R.string.open_drawer_desc, R.string.close_drawer_desc
+            );
+
+            mDrawer.setDrawerListener(mDrawerToggle);
+            mDrawerToggle.syncState();
+        }
 
         setupDrawerContent((NavigationView)findViewById(R.id.quotes_categories_nav));
-
         QuotesSyncAdapter.initializeSyncAdapter(this);
     }
 
@@ -100,9 +108,16 @@ public class MainActivity extends AppCompatActivity
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         mCategory = (String)menuItem.getTitle();
+        QuotesListFragment qlFragment = (QuotesListFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_quote_list);
 
-        QuotesListFragment qlFragment =
-                (QuotesListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_quote_list);
+//        if(mTwoPane) {
+//
+//        } else {
+//            qlFragment = (QuotesListFragment)getSupportFragmentManager()
+//                    .findFragmentById(R.id.fragment_quote_list);
+//        }
+
         qlFragment.onCategoryChanged(mCategory);
 
         // Highlight the selected item has been done by NavigationView
@@ -110,7 +125,10 @@ public class MainActivity extends AppCompatActivity
         // Set action bar title
 //        setTitle(menuItem.getTitle());
         // Close the navigation drawer
-        mDrawer.closeDrawers();
+
+        if(mDrawer != null) {
+            mDrawer.closeDrawers();
+        }
     }
 
     @Override

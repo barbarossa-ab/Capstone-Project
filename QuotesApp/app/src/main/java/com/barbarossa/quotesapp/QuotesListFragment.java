@@ -19,21 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.barbarossa.quotesapp.data.QuotesCategoriesContract;
-import com.barbarossa.quotesapp.data.QuotesContract;
 import com.barbarossa.quotesapp.data.QuotesLoader;
 import com.barbarossa.quotesapp.data.QuotesProvider;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link QuotesListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link QuotesListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class QuotesListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -48,16 +37,16 @@ public class QuotesListFragment extends Fragment
         // Required empty public constructor
     }
 
-//    public static QuotesListFragment newInstance(String category) {
-//        QuotesListFragment fragment = new QuotesListFragment();
-//        Bundle args = new Bundle();
-//        args.putString(CATEGORY_KEY, category);
-//        fragment.setArguments(args);
-//
-//        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
-//
-//        return fragment;
-//    }
+    public static QuotesListFragment newInstance(String category) {
+        QuotesListFragment fragment = new QuotesListFragment();
+        Bundle args = new Bundle();
+        args.putString(CATEGORY_KEY, category);
+        fragment.setArguments(args);
+
+        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

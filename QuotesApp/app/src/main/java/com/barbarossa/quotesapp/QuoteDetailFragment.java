@@ -6,11 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.barbarossa.quotesapp.data.QuotesLoader;
@@ -69,9 +72,35 @@ public class QuoteDetailFragment extends Fragment
         mArticleWebView.getSettings().setJavaScriptEnabled(true);
         mArticleWebView.setWebViewClient(new WebViewClient());
 
+        webViewContainerMarginFix(rootView.findViewById(R.id.webview_container));
+
 //        getLoaderManager().initLoader(0, null, this);
 
         return rootView;
+    }
+
+    private void webViewContainerMarginFix(View viewById) {
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+        if (getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(
+                    tv.data,
+                    getResources().getDisplayMetrics()
+            );
+        }
+
+        LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+        lParams.setMargins(
+                0,  // left
+                -actionBarHeight,  // top
+                0,  // right
+                0   // bottom
+        );
+
+        viewById.setLayoutParams(lParams);
     }
 
     @Override
