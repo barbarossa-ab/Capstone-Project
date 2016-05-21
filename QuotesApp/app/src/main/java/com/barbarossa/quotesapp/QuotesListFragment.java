@@ -137,6 +137,14 @@ public class QuotesListFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.e("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
 
+        if(mCategory.toLowerCase()
+                .equals(getContext()
+                        .getString(R.string.categ_favourites).toLowerCase())) {
+
+            return QuotesLoader.newQuotesForCategoryInstance(
+                    getContext(),
+                    mCategory.toLowerCase());
+        }
         return QuotesLoader.newQuotesForCategoryAfterTimestampInstance(
                 getContext(),
                 mCategory.toLowerCase(),
