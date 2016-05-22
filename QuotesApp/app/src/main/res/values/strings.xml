@@ -16,4 +16,6 @@
     <string name="categ_favourites">Favourites</string>
 
     <string name="no_quotes_text">No favourite quote yet.</string>
+    <string name="mark_fav_description">Mark quote as favourite</string>
+    <string name="share_description">Share quote</string>
 </resources>

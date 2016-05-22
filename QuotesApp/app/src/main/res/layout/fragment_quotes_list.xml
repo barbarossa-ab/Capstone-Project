@@ -9,4 +9,6 @@
     android:paddingTop="@dimen/list_top_margin"
     android:paddingLeft="@dimen/list_side_margin"
     android:paddingRight="@dimen/list_side_margin"
+    android:paddingStart="@dimen/list_side_margin"
+    android:paddingEnd="@dimen/list_side_margin"
     android:paddingBottom="@dimen/list_bottom_margin" />
