@@ -12,14 +12,18 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.RemoteViews;
 
+import com.barbarossa.quotesapp.DetailActivity;
 import com.barbarossa.quotesapp.MainActivity;
 import com.barbarossa.quotesapp.R;
 import com.barbarossa.quotesapp.Utility;
+import com.barbarossa.quotesapp.data.QuotesLoader;
 
 /**
  * Created by Ioan on 22.05.2016.
  */
 public class QuotesWidgetProvider extends AppWidgetProvider {
+    private static final String QUOTE_CLICK_ACTION = "com.barbarossa.quotesapp.QUOTE_CLICK_ACTION";
+
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         super.onReceive(context, intent);
@@ -29,22 +33,23 @@ public class QuotesWidgetProvider extends AppWidgetProvider {
                     new ComponentName(context, getClass()));
 
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_quotes_list);
+        } else if(QUOTE_CLICK_ACTION.equals(intent.getAction())) {
+
+            long quoteId = intent.getLongExtra(Utility.QUOTE_KEY, 0);
+            Intent detailIntent = new Intent(context, DetailActivity.class);
+            detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            detailIntent.putExtra(Utility.QUOTE_KEY, quoteId);
+
+            context.startActivity(detailIntent);
         }
     }
 
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-//        Intent service_start = new Intent(context, FetchService.class);
-//        context.startService(service_start);
-
         // update each of the widgets with the remote adapter
         for (int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_fav_quotes);
-
-            Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.widget_quotes_container, pendingIntent);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 setRemoteAdapter(context, views);
@@ -52,11 +57,11 @@ public class QuotesWidgetProvider extends AppWidgetProvider {
                 setRemoteAdapterV11(context, views);
             }
 
-            Intent clickIntentTemplate = new Intent(context, MainActivity.class);
-            PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
-                    .addNextIntentWithParentStack(clickIntentTemplate)
-                    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            views.setPendingIntentTemplate(R.id.widget_quotes_list, clickPendingIntentTemplate);
+            Intent clickQuoteIntent = new Intent(context, QuotesWidgetProvider.class);
+            clickQuoteIntent.setAction(QuotesWidgetProvider.QUOTE_CLICK_ACTION);
+            PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context, 0, clickQuoteIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setPendingIntentTemplate(R.id.widget_quotes_list, clickPendingIntent);
 
             views.setEmptyView(R.id.widget_quotes_list, R.id.widget_no_quotes_text);
 
@@ -66,6 +71,8 @@ public class QuotesWidgetProvider extends AppWidgetProvider {
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
+
+
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }

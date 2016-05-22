@@ -4,18 +4,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.barbarossa.quotesapp.MainActivity;
 import com.barbarossa.quotesapp.R;
+import com.barbarossa.quotesapp.Utility;
 import com.barbarossa.quotesapp.data.QuotesLoader;
 import com.barbarossa.quotesapp.data.QuotesProvider;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by Ioan on 22.05.2016.
@@ -46,9 +42,6 @@ public class QuotesRemoteViewsService extends RemoteViewsService {
                         .buildQuotesByCategoryUri(
                                 getString(R.string.categ_favourites).toLowerCase()
                         );
-
-//                Date date = new Date(System.currentTimeMillis());
-//                SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
 
                 data = getContentResolver().query(
                         favQuotesUri,
@@ -89,32 +82,11 @@ public class QuotesRemoteViewsService extends RemoteViewsService {
                 views.setTextViewText(R.id.quote_text, data.getString(QuotesLoader.Query.QUOTE_TEXT));
                 views.setTextViewText(R.id.author_text, data.getString(QuotesLoader.Query.AUTHOR));
 
-//                views.setTextViewText(R.id.matchScore, Utilies.getScores(
-//                        data.getInt(COL_HOME_GOALS), data.getInt(COL_AWAY_GOALS))
-//                );
-//
-//                if(position % 2 == 0) {
-//                    views.setInt(R.id.matchInfo, "setBackgroundColor",
-//                            getResources().getColor(R.color.white));
-//                } else {
-//                    views.setInt(R.id.matchInfo, "setBackgroundColor",
-//                            getResources().getColor(R.color.light_grey));
-//                }
+                Intent fillInIntent = new Intent();
+                fillInIntent.putExtra(Utility.QUOTE_KEY, data.getLong(QuotesLoader.Query._ID));
+                views.setOnClickFillInIntent(R.id.quote_item_container, fillInIntent);
 
-//                Intent fillInIntent = new Intent(getApplicationContext(), MainActivity.class);
-//                views.setOnClickFillInIntent(R.id.matchInfo, fillInIntent);
-
-//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-//                    String matchInfo = getString(R.string.cd_match_detail,
-//                            data.getString(COL_MATCHTIME),
-//                            data.getString(COL_HOME),
-//                            data.getString(COL_AWAY),
-//                            Utilies.getScoresContentDescription(ScoresRemoteViewsService.this,
-//                                    data.getInt(COL_HOME_GOALS),
-//                                    data.getInt(COL_AWAY_GOALS)));
-//
-//                    views.setContentDescription(R.id.matchInfo, matchInfo);
-//                }
+//              views.setContentDescription(R.id.matchInfo, matchInfo);
 
                 return views;
             }
