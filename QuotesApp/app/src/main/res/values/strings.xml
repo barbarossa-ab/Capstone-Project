@@ -14,4 +14,6 @@
     <string name="categ_love">Love</string>
     <string name="categ_family">Family</string>
     <string name="categ_favourites">Favourites</string>
+
+    <string name="no_quotes_text">No favourite quote yet.</string>
 </resources>

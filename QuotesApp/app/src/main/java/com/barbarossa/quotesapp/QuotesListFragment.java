@@ -227,6 +227,10 @@ public class QuotesListFragment extends Fragment
                             favCatId
                     );
 
+                    // update widget
+                    Intent dataUpdatedIntent = new Intent(Utility.FAV_QUOTES_UPDATED)
+                            .setPackage(getContext().getPackageName());
+                    getContext().sendBroadcast(dataUpdatedIntent);
                 }
             });
         }

@@ -18,6 +18,7 @@ public class Utility {
     private static final String PREF_LAST_UPDATE = "pref_last_update";
 
     public static final String QUOTE_KEY = "QUOTE_KEY";
+    public static final String FAV_QUOTES_UPDATED = "com.barbarossa.quotesapp.FAV_QUOTES_UPDATED";
 
     public static long getLastUpdate(Context context) {
         SharedPreferences sp = context.getSharedPreferences(QUOTES_SHARED_PREF, Context.MODE_PRIVATE);
