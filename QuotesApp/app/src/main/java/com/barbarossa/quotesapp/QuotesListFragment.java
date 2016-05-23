@@ -32,6 +32,7 @@ public class QuotesListFragment extends Fragment
     private OnFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private Adapter mQuoteAdapter;
+    private TextView mEmptyView;
 
     public QuotesListFragment() {
         // Required empty public constructor
@@ -81,6 +82,8 @@ public class QuotesListFragment extends Fragment
 
         mQuoteAdapter = new Adapter();
         mRecyclerView.setAdapter(mQuoteAdapter);
+
+        mEmptyView = (TextView)rootView.findViewById(R.id.empty_view);
 
 //        if (savedInstanceState == null) {
 //            refresh();
@@ -152,20 +155,6 @@ public class QuotesListFragment extends Fragment
         mQuoteAdapter.swapCursor(null);
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onQuoteClick(long id);
-    }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
@@ -245,7 +234,19 @@ public class QuotesListFragment extends Fragment
         public void swapCursor(Cursor newCursor) {
             mCursor = newCursor;
             notifyDataSetChanged();
-//            mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+
+            if(getItemCount() == 0) {
+                mEmptyView.setVisibility(View.VISIBLE);
+
+                if(!Utility.isNetworkAvailable(getContext())
+                        && !mCategory.equals(getString(R.string.categ_favourites).toLowerCase())) {
+                    mEmptyView.setText(getString(R.string.empty_list_text_no_internet));
+                } else {
+                    mEmptyView.setText(getString(R.string.empty_list_text));
+                }
+            } else {
+               mEmptyView.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -263,6 +264,22 @@ public class QuotesListFragment extends Fragment
             shareBtn = (ImageView) view.findViewById(R.id.share_btn);
             favouriteBtn = (ImageView) view.findViewById(R.id.favourite_btn);
         }
+    }
+
+
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onQuoteClick(long id);
     }
 
 }

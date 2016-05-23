@@ -20,16 +20,9 @@ import com.barbarossa.quotesapp.sync.QuotesSyncAdapter;
 public class MainActivity extends AppCompatActivity
         implements QuotesListFragment.OnFragmentInteractionListener {
 
-    private boolean mTwoPane;
-
     private DrawerLayout mDrawer;
     private Toolbar mToolbar;
-    private FrameLayout mContainer;
-
     private String mCategory;
-//    private
-//
-//    private static final String CATEGORY_KEY = "CATEGORY_KEY";
 
 
     @Override
@@ -40,26 +33,12 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-//        mContainer = (FrameLayout) findViewById(R.id.fragment_container);
-//
-//        if(mContainer != null) {
-//            QuotesListFragment quoteListFragment = QuotesListFragment.newInstance(mCategory);
-//
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//            fragmentTransaction.replace(R.id.fragment_container, quoteListFragment);
-//            fragmentTransaction.commit();
-//        }
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        if(mDrawer == null) {
-            mTwoPane = true;
+        if(mDrawer != null) {
 
-        } else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -75,24 +54,6 @@ public class MainActivity extends AppCompatActivity
         setupDrawerContent((NavigationView)findViewById(R.id.quotes_categories_nav));
         QuotesSyncAdapter.initializeSyncAdapter(this);
     }
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        outState.putString(CATEGORY_KEY, mCategory);
-//        super.onSaveInstanceState(outState);
-//    }
-
-    //    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // The action bar home/up action should open or close the drawer.
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                mDrawer.openDrawer(GravityCompat.START);
-//                return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -111,21 +72,13 @@ public class MainActivity extends AppCompatActivity
         QuotesListFragment qlFragment = (QuotesListFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_quote_list);
 
-//        if(mTwoPane) {
-//
-//        } else {
-//            qlFragment = (QuotesListFragment)getSupportFragmentManager()
-//                    .findFragmentById(R.id.fragment_quote_list);
-//        }
-
         qlFragment.onCategoryChanged(mCategory);
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
         // Set action bar title
-//        setTitle(menuItem.getTitle());
+        setTitle(menuItem.getTitle());
         // Close the navigation drawer
-
         if(mDrawer != null) {
             mDrawer.closeDrawers();
         }

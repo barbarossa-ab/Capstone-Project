@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
+
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:scrollbarStyle="outsideOverlay"
-    android:paddingTop="@dimen/list_top_margin"
-    android:paddingLeft="@dimen/list_side_margin"
-    android:paddingRight="@dimen/list_side_margin"
-    android:paddingStart="@dimen/list_side_margin"
-    android:paddingEnd="@dimen/list_side_margin"
-    android:paddingBottom="@dimen/list_bottom_margin" />
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:text="@string/empty_list_text"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:paddingTop="@dimen/list_top_margin"
+        android:paddingLeft="@dimen/list_side_margin"
+        android:paddingRight="@dimen/list_side_margin"
+        android:paddingStart="@dimen/list_side_margin"
+        android:paddingEnd="@dimen/list_side_margin"
+        android:paddingBottom="@dimen/list_bottom_margin" />
+</FrameLayout>

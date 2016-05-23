@@ -2,6 +2,7 @@ package com.barbarossa.quotesapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 /**
  * Created by Ioan on 11.05.2016.
@@ -28,5 +29,12 @@ public class Utility {
     public static void setLastUpdate(Context context, long lastUpdate) {
         SharedPreferences sp = context.getSharedPreferences(QUOTES_SHARED_PREF, Context.MODE_PRIVATE);
         sp.edit().putLong(PREF_LAST_UPDATE, lastUpdate).apply();
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        final ConnectivityManager connectivityManager =
+                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null
+                && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }
