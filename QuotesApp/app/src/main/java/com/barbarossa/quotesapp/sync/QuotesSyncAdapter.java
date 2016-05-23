@@ -117,31 +117,6 @@ public class QuotesSyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d(LOG_TAG, "Finished sync");
 
-//        String[] PROJECTION = {
-//                QuotesContract.TABLE_NAME + "." + QuotesContract._ID,
-//                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_ID,
-//                QuotesContract.TABLE_NAME + "." + QuotesContract.QUOTE_TEXT,
-//                QuotesContract.TABLE_NAME + "." + QuotesContract.AUTHOR,
-//                QuotesContract.TABLE_NAME + "." + QuotesContract.TIMESTAMP,
-//                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.QUOTE_ID,
-//                QuotesCategoriesContract.TABLE_NAME + "." + QuotesCategoriesContract.CATEGORY_ID,
-//                CategoriesContract.TABLE_NAME + "." + CategoriesContract._ID,
-//                CategoriesContract.TABLE_NAME + "." + CategoriesContract.CATEGORY_NAME,
-//
-//        };
-//
-//
-//        Cursor c = getContext().getContentResolver().query(
-//                QuotesProvider.buildQuotesByCategoryUri("love"),
-//                PROJECTION,
-//                null,
-//                null,
-//                null
-//        );
-//
-//        if(c.moveToFirst()) {
-//            Log.e("dump-cursor", DatabaseUtils.dumpCursorToString(c));
-//        }
     }
 
 

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e("quotesapp","main activity onCreate()");
+        Log.d("quotesapp","main activity onCreate()");
 
         setContentView(R.layout.activity_main);
 

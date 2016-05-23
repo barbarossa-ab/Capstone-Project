@@ -44,7 +44,7 @@ public class QuotesListFragment extends Fragment
         args.putString(CATEGORY_KEY, category);
         fragment.setArguments(args);
 
-        Log.e("quotesapp","quote list fragment newInstance() : " + fragment.toString());
+        Log.d("quotesapp","quote list fragment newInstance() : " + fragment.toString());
 
         return fragment;
     }
@@ -69,7 +69,7 @@ public class QuotesListFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("quotesapp","quote list fragment onCreateView() : " + this.toString());
+        Log.d("quotesapp","quote list fragment onCreateView() : " + this.toString());
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_quotes_list, container, false);
@@ -94,7 +94,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.e("quotesapp-loader","init loader... " + this.toString());
+        Log.d("quotesapp-loader","init loader... " + this.toString());
         getLoaderManager().initLoader(0, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -103,7 +103,7 @@ public class QuotesListFragment extends Fragment
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        Log.e("quotesapp","quote list fragment onAttach() : " + this.toString());
+        Log.d("quotesapp","quote list fragment onAttach() : " + this.toString());
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -116,7 +116,7 @@ public class QuotesListFragment extends Fragment
     public void onDetach() {
         super.onDetach();
 
-        Log.e("quotesapp","quote list fragment onDetach() : " + this.toString());
+        Log.d("quotesapp","quote list fragment onDetach() : " + this.toString());
         mListener = null;
     }
 
@@ -127,7 +127,7 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.e("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
+        Log.d("quotesapp-loader","quote list fragment onCreateLoader() : " + this.toString());
 
         if(mCategory.toLowerCase()
                 .equals(getContext()
@@ -145,13 +145,13 @@ public class QuotesListFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.e("quotesapp-loader","quote list fragment onLoadFinished() : " + this.toString());
+        Log.d("quotesapp-loader","quote list fragment onLoadFinished() : " + this.toString());
         mQuoteAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.e("quotesapp-loader","quote list fragment onLoaderReset() : " + this.toString());
+        Log.d("quotesapp-loader","quote list fragment onLoaderReset() : " + this.toString());
         mQuoteAdapter.swapCursor(null);
     }
 
