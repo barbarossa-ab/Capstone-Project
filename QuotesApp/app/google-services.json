@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1077237448604",
+    "firebase_url": "https://quotesapp-e98d0.firebaseio.com",
+    "project_id": "quotesapp-e98d0",
+    "storage_bucket": "quotesapp-e98d0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1077237448604:android:b59bb72be87b2dad",
+        "android_client_info": {
+          "package_name": "com.barbarossa.quotesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1077237448604-5lkur306lpda2k7h3a848lhiiste4d2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdmKoR3AESazks661QrfNalLOcxLNlx5k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

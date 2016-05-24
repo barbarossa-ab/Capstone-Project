@@ -25,4 +25,5 @@
         android:paddingStart="@dimen/list_side_margin"
         android:paddingEnd="@dimen/list_side_margin"
         android:paddingBottom="@dimen/list_bottom_margin" />
+
 </FrameLayout>

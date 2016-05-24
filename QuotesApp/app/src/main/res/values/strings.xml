@@ -20,4 +20,8 @@
     <string name="share_description">Share quote</string>
     <string name="empty_list_text_no_internet">This application needs internet.\nNo quote to display for now.</string>
     <string name="empty_list_text">No quote to display for now.</string>
+
+    <string name="application_admob_id">ca-app-pub-8027490506214671~5152889346</string>
+    <string name="banner_main_activity">ca-app-pub-8027490506214671/6629622540</string>
+    <string name="banner_detail_activity">ca-app-pub-8027490506214671/1132988944</string>
 </resources>

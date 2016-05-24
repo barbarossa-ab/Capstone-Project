@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.android.gms.ads.AdView;
+
 public class DetailActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private long mQuoteId;
@@ -29,6 +31,8 @@ public class DetailActivity extends AppCompatActivity {
                 (QuoteDetailFragment)getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_quote_detail);
         qdFragment.setQuoteId(mQuoteId);
+
+        Utility.setupAdView((AdView)findViewById(R.id.adView));
     }
 
     @Override

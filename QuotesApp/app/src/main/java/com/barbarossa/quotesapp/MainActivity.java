@@ -13,9 +13,13 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.barbarossa.quotesapp.sync.QuotesSyncAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity
         implements QuotesListFragment.OnFragmentInteractionListener {
@@ -24,12 +28,13 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     private String mCategory;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("quotesapp","main activity onCreate()");
+
+        MobileAds.initialize(getApplicationContext(), getString(R.string.application_admob_id));
 
         setContentView(R.layout.activity_main);
 
@@ -53,6 +58,8 @@ public class MainActivity extends AppCompatActivity
 
         setupDrawerContent((NavigationView)findViewById(R.id.quotes_categories_nav));
         QuotesSyncAdapter.initializeSyncAdapter(this);
+
+        Utility.setupAdView((AdView)findViewById(R.id.adView));
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -90,4 +97,5 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(Utility.QUOTE_KEY, quoteId);
         startActivity(intent);
     }
+
 }

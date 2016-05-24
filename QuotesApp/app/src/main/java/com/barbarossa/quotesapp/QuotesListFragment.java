@@ -19,8 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.barbarossa.quotesapp.data.QuotesLoader;
 import com.barbarossa.quotesapp.data.QuotesProvider;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 
 public class QuotesListFragment extends Fragment
@@ -84,6 +89,7 @@ public class QuotesListFragment extends Fragment
         mRecyclerView.setAdapter(mQuoteAdapter);
 
         mEmptyView = (TextView)rootView.findViewById(R.id.empty_view);
+
 
 //        if (savedInstanceState == null) {
 //            refresh();
@@ -265,6 +271,8 @@ public class QuotesListFragment extends Fragment
             favouriteBtn = (ImageView) view.findViewById(R.id.favourite_btn);
         }
     }
+
+
 
 
 
