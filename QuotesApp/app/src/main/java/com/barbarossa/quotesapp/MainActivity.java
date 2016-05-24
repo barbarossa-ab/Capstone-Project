@@ -20,6 +20,7 @@ import com.barbarossa.quotesapp.sync.QuotesSyncAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.analytics.Tracker;
 
 public class MainActivity extends AppCompatActivity
         implements QuotesListFragment.OnFragmentInteractionListener {

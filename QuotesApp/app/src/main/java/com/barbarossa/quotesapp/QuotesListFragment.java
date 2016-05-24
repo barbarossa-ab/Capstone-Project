@@ -26,6 +26,8 @@ import com.barbarossa.quotesapp.data.QuotesProvider;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 
 public class QuotesListFragment extends Fragment
@@ -38,6 +40,8 @@ public class QuotesListFragment extends Fragment
     private RecyclerView mRecyclerView;
     private Adapter mQuoteAdapter;
     private TextView mEmptyView;
+
+    private Tracker mTracker;
 
     public QuotesListFragment() {
         // Required empty public constructor
@@ -57,11 +61,19 @@ public class QuotesListFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AnalyticsApplication application = (AnalyticsApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+
         if (savedInstanceState != null) {
             mCategory = savedInstanceState.getString(CATEGORY_KEY);
         } else {
             mCategory = getResources().getStringArray(R.array.categories_array)[0].toLowerCase();
         }
+
+        Log.i("analytics", "Setting screen name: " + mCategory);
+        mTracker.setScreenName("QuoteList~" + mCategory);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
@@ -129,6 +141,10 @@ public class QuotesListFragment extends Fragment
     public void onCategoryChanged(String category) {
         mCategory = category;
         getLoaderManager().restartLoader(0, null, this);
+
+        Log.i("analytics", "Setting screen name: " + mCategory);
+        mTracker.setScreenName("QuoteList~" + mCategory);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

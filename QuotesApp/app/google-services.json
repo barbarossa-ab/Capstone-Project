@@ -1,39 +1,37 @@
 {
   "project_info": {
-    "project_number": "1077237448604",
-    "firebase_url": "https://quotesapp-e98d0.firebaseio.com",
-    "project_id": "quotesapp-e98d0",
-    "storage_bucket": "quotesapp-e98d0.appspot.com"
+    "project_number": "29960447243",
+    "project_id": "quotesapp-933e1"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1077237448604:android:b59bb72be87b2dad",
+        "mobilesdk_app_id": "1:29960447243:android:b59bb72be87b2dad",
         "android_client_info": {
           "package_name": "com.barbarossa.quotesapp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1077237448604-5lkur306lpda2k7h3a848lhiiste4d2u.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAdmKoR3AESazks661QrfNalLOcxLNlx5k"
+          "current_key": "AIzaSyA3Q5IiGrt7jpBEzBNzHYps4avapv95c5A"
         }
       ],
       "services": {
         "analytics_service": {
-          "status": 1
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-78271088-1"
+          }
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 2
+          "status": 2,
+          "test_banner_ad_unit_id": "ca-app-pub-3940256099942544/6300978111",
+          "test_interstitial_ad_unit_id": "ca-app-pub-3940256099942544/1033173712"
         }
       }
     }
